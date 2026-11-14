@@ -9,8 +9,8 @@ export function filterRestaurants(data,{district='전체',category='전체',quer
   const q=query.trim().toLocaleLowerCase('ko'), omit=excluded.split(/[,，]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
   return data.filter(r=> (district==='전체'||r.district===district) && (category==='전체'||r.category===category) &&
     (!q||[r.name,r.address,r.category].join(' ').toLowerCase().includes(q)) && !excludeIds.includes(r.id) &&
-    !omit.some(x=>[r.name,r.category].join(' ').toLowerCase().includes(x)) && (!favorites||favorites.includes(r.id)) &&
-    (!radius||(origin && distanceKm(origin,r)!==null && distanceKm(origin,r)<=radius)));
+    !omit.some(x=>[r.name,r.category,r.menu].join(' ').toLowerCase().includes(x)) && (!favorites||favorites.includes(r.id)) &&
+    (!radius||!origin||(distanceKm(origin,r)!==null && distanceKm(origin,r)<=radius)));
 }
 export function pickCandidates(data,count=8,rng=Math.random) {
   const pool=[...new Map(data.map(r=>[r.id,r])).values()];
