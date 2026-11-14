@@ -1,13 +1,19 @@
 export const TAU = Math.PI * 2;
+export const LUNCH_MENUS = [
+  ['제육볶음','한식','🍚'],['김치찌개','한식','🍲'],['된장찌개','한식','🍲'],['비빔밥','한식','🥗'],
+  ['국밥','한식','🍲'],['돈까스','양식','🍛'],['짜장면','중식','🥡'],['짬뽕','중식','🍜'],
+  ['칼국수','한식','🍜'],['우동','일식','🍜'],['김밥','분식','🍙'],['파스타','양식','🍝']
+].map(([name,category,emoji])=>({id:'menu-'+name,name,category,emoji,source:'menu'}));
 export function distanceKm(a,b) {
   if(!a || !b || !Number.isFinite(a.lat) || !Number.isFinite(b.lat) || !Number.isFinite(a.lng) || !Number.isFinite(b.lng)) return null;
   const r=Math.PI/180, dlat=(b.lat-a.lat)*r, dlng=(b.lng-a.lng)*r;
   const v=Math.sin(dlat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dlng/2)**2;
   return 6371*2*Math.atan2(Math.sqrt(v),Math.sqrt(Math.max(0,1-v)));
 }
-export function filterRestaurants(data,{district='전체',category='전체',query='',radius=0,origin=null,excluded='',excludeIds=[],favorites=null}={}) {
+export function filterRestaurants(data,{district='전체',category='전체',query='',radius=0,origin=null,excluded='',excludeIds=[],favorites=null,lunchOnly=false}={}) {
   const q=query.trim().toLocaleLowerCase('ko'), omit=excluded.split(/[,，]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
   return data.filter(r=> (district==='전체'||r.district===district) && (category==='전체'||r.category===category) &&
+    (!lunchOnly||(['한식','중식','일식','양식','분식'].includes(r.category)&&!/치킨|통닭|호프|포차|주점|술집|맥주|펍/.test(r.name))) &&
     (!q||[r.name,r.address,r.category].join(' ').toLowerCase().includes(q)) && !excludeIds.includes(r.id) &&
     !omit.some(x=>[r.name,r.category,r.menu].join(' ').toLowerCase().includes(x)) && (!favorites||favorites.includes(r.id)) &&
     (!radius||!origin||(distanceKm(origin,r)!==null && distanceKm(origin,r)<=radius)));
