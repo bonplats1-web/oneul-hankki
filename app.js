@@ -155,4 +155,5 @@ $$('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=
 $$('dialog').forEach(d=>d.addEventListener('close',()=>{const el=d.querySelector('#toast');if(el){const active=$('dialog[open]');(active||document.body).append(el);el.classList.toggle('dialog-toast',!!active);}}));
 window.addEventListener('hashchange',restoreShared);
 const games=initGames({getAll:()=>all,isBusy:()=>busy,setBusy,onWin:completeChoice,toast,beep,random,esc,emojis});
+setRouletteMode('menu');
 try{const response=await fetch('./restaurants.json');if(!response.ok)throw new Error('data');base=await response.json();all=[...base,...custom];games.refresh();renderFilters();if(rouletteMode==='restaurant')refill();else renderList();document.fonts?.ready.then(drawWheel);restoreShared();}catch{$('#restaurants').innerHTML='<div class="empty-state"><strong>식당 자료를 불러오지 못했어요</strong>연결 상태를 확인한 뒤 새로고침해 주세요.</div>';if(rouletteMode!=='menu')$('#spin').disabled=true;games.refresh();}
